@@ -93,16 +93,25 @@ while not game_over:
     pygame.draw.rect(dis, "red", [Food.x, Food.y, snake_size, snake_size])
 
     #print(snake)
-    for index in range(len(snake)):
-        if index == 0:
+    for index in range(len(snake)-1, -1, -1):
+        print(index)
+        """if index == 0:
             snake[index][0] += x_delta
             snake[index][1] += y_delta
         else:
             snake[index][0] = snake[index - 1][0] - x_delta
             snake[index][1] = snake[index - 1][1] - y_delta
+            #snake[len(snake) - index - 1][0] = snake[len(snake) - index][0]
+            #snake[len(snake) - index - 1][1] = snake[len(snake) - index][1]"""
+        if index == 0:
+            snake[index][0] += x_delta
+            snake[index][1] += y_delta
+        else:
+            snake[index][0] = snake[index - 1][0]
+            snake[index][1] = snake[index - 1][1]
 
 
-    #print(snake)
+    print(snake)
     """for index, element in enumerate(snake):
         element[0] -= index * x_delta
         element[1] -= index * y_delta"""
@@ -117,7 +126,7 @@ while not game_over:
     if starting_x < 0 or starting_x > width - snake_size or starting_y < 0 or starting_y > height - snake_size:  # wychodzenie poza krawedzie rysunku
         game_over = True
 
-    clock.tick(7)
+    clock.tick(10)
 
 pygame.quit()  # wylacza wszyskie podmoduły pygame
 quit()
