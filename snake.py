@@ -44,15 +44,22 @@ class Food:
         Food.y = random.randrange(0, height - snake_size, snake_size)
 
 
-
-
+# first round in the game
 previous = pygame.K_RIGHT  # previous to zmienna przetrzymujaca poprzednio wcisniety klawisz
 first_round_in_game = True  # first iteration of loop game_over
 
+# making whole snake
 snake = list()
 snake.append([starting_x, starting_y])
 print(snake)
-steps = list()
+
+
+# snake eats itself - program should stop
+def snake_eat_itself(snake_list):
+    for coordinate in snake_list:
+        if snake_list.count(coordinate) > 1:
+            return True
+
 
 game_over = False
 while not game_over:
@@ -77,7 +84,6 @@ while not game_over:
                 y_delta = snake_size
                 previous = pygame.K_DOWN
 
-
     starting_x += x_delta
     starting_y += y_delta
     dis.fill("black")
@@ -87,22 +93,11 @@ while not game_over:
         if not first_round_in_game:
             print("jedzonko")
             snake.append([starting_x - x_delta, starting_y - y_delta])
-            steps.append((x_delta, y_delta))
-            #print(snake)
     first_round_in_game = False
     pygame.draw.rect(dis, "red", [Food.x, Food.y, snake_size, snake_size])
 
-    #print(snake)
+    # Make all elements of snake move
     for index in range(len(snake)-1, -1, -1):
-        print(index)
-        """if index == 0:
-            snake[index][0] += x_delta
-            snake[index][1] += y_delta
-        else:
-            snake[index][0] = snake[index - 1][0] - x_delta
-            snake[index][1] = snake[index - 1][1] - y_delta
-            #snake[len(snake) - index - 1][0] = snake[len(snake) - index][0]
-            #snake[len(snake) - index - 1][1] = snake[len(snake) - index][1]"""
         if index == 0:
             snake[index][0] += x_delta
             snake[index][1] += y_delta
@@ -110,11 +105,9 @@ while not game_over:
             snake[index][0] = snake[index - 1][0]
             snake[index][1] = snake[index - 1][1]
 
-
-    print(snake)
-    """for index, element in enumerate(snake):
-        element[0] -= index * x_delta
-        element[1] -= index * y_delta"""
+    # Collision of snake with itself
+    if snake_eat_itself(snake):
+        game_over = True
 
     # Draw snake
     for element in snake:
