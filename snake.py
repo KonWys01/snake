@@ -3,14 +3,16 @@ import pygame
 import random
 import sys
 pygame.init()  # dostep do wszystkich metod z pygame
-width = 900
-height = 600
+width = 240
+height = 60
 dis = pygame.display.set_mode((width, height))  # rozmiar okna
 pygame.display.update()  # aktualizuje ekran
 pygame.display.set_caption('snake zrobiony ze strony, pewnie dziala cool')  # daje tytul na samej gorze
 
-starting_x = width / 2
-starting_y = height / 2
+"""starting_x = width / 2
+starting_y = height / 2"""
+starting_x = 0
+starting_y = 0
 x_delta = 0
 y_delta = 0
 
@@ -93,7 +95,15 @@ while not game_over:
         if not first_round_in_game:
             print("jedzonko")
             snake.append([starting_x - x_delta, starting_y - y_delta])
+            break
     first_round_in_game = False
+    """for element in snake:
+        while Food.x == starting_x and Food.y == starting_y:
+            Food.re_generate_food()
+            if not first_round_in_game:
+                print("jedzonko")
+                snake.append([starting_x - x_delta, starting_y - y_delta])
+    first_round_in_game = False"""
     pygame.draw.rect(dis, "red", [Food.x, Food.y, snake_size, snake_size])
 
     # Make all elements of snake move
@@ -105,8 +115,10 @@ while not game_over:
             snake[index][0] = snake[index - 1][0]
             snake[index][1] = snake[index - 1][1]
 
+    # test if every element is corrent
+    print(snake)
     # Collision of snake with itself
-    if snake_eat_itself(snake):
+    if snake_eat_itself(snake):  # jest jakis bug, ale nie mam pojecia jaki i jak go naprawic
         game_over = True
 
     # Draw snake
@@ -119,7 +131,7 @@ while not game_over:
     if starting_x < 0 or starting_x > width - snake_size or starting_y < 0 or starting_y > height - snake_size:  # wychodzenie poza krawedzie rysunku
         game_over = True
 
-    clock.tick(10)
+    clock.tick(2)
 
 pygame.quit()  # wylacza wszyskie podmoduły pygame
 quit()
