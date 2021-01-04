@@ -37,14 +37,18 @@ print(apple.x, apple.y)"""
 
 
 class Food:
-    x = random.randrange(0, width - snake_size, snake_size)
-    y = random.randrange(0, height - snake_size, snake_size)
+    # x = random.randrange(0, width - snake_size, snake_size)
+    # y = random.randrange(0, height - snake_size, snake_size)
+    x = random.randrange(0, width, snake_size)
+
+    y = random.randrange(0, height, snake_size)
 
     @staticmethod
     def re_generate_food():
-        Food.x = random.randrange(0, width - snake_size, snake_size)
-        Food.y = random.randrange(0, height - snake_size, snake_size)
-
+        Food.x = random.randrange(0, width, snake_size)
+        Food.y = random.randrange(0, height, snake_size)
+        # Food.x = random.randrange(0, width - snake_size, snake_size)
+        # Food.y = random.randrange(0, height - snake_size, snake_size)
 
 # first round in the game
 previous = pygame.K_RIGHT  # previous to zmienna przetrzymujaca poprzednio wcisniety klawisz
@@ -54,6 +58,9 @@ first_round_in_game = True  # first iteration of loop game_over
 snake = list()
 snake.append([starting_x, starting_y])
 print(snake)
+
+# Food not in whole snake
+
 
 
 # snake eats itself - program should stop
@@ -90,20 +97,31 @@ while not game_over:
     starting_y += y_delta
     dis.fill("black")
     # Draw Food outside of snake
-    while Food.x == starting_x and Food.y == starting_y:
+    #while Food.x == starting_x and Food.y == starting_y:
+    while snake[0][0] == Food.x and snake[0][1] == Food.y:
         Food.re_generate_food()
+        first_round_in_game = False
         if not first_round_in_game:
             print("jedzonko")
             snake.append([starting_x - x_delta, starting_y - y_delta])
             break
-    first_round_in_game = False
-    """for element in snake:
-        while Food.x == starting_x and Food.y == starting_y:
-            Food.re_generate_food()
-            if not first_round_in_game:
-                print("jedzonko")
-                snake.append([starting_x - x_delta, starting_y - y_delta])
-    first_round_in_game = False"""
+    # first_round_in_game = False
+
+    # Food.re_generate_food()
+    while [Food.x, Food.y] in snake:
+        Food.re_generate_food()
+        print("infinite loop", snake, [Food.x, Food.y])
+
+    """if len(snake) == 2:
+        print(snake, "game_over")
+        game_over = True
+        break"""
+
+
+
+
+                
+
     pygame.draw.rect(dis, "red", [Food.x, Food.y, snake_size, snake_size])
 
     # Make all elements of snake move
@@ -116,7 +134,7 @@ while not game_over:
             snake[index][1] = snake[index - 1][1]
 
     # test if every element is corrent
-    print(snake)
+    # print(snake)
     # Collision of snake with itself
     if snake_eat_itself(snake):  # jest jakis bug, ale nie mam pojecia jaki i jak go naprawic
         game_over = True
@@ -124,7 +142,12 @@ while not game_over:
     # Draw snake
     for element in snake:
         pygame.draw.rect(dis, "blue", [element[0], element[1], snake_size, snake_size])  # rysujemy niebieski prostokat w miejscu 200x150 o wymiarach 10x10
+
     pygame.draw.rect(dis, "blue", [starting_x, starting_y, snake_size, snake_size])
+
+    for index in range(0, len(snake), 1):
+        if index == 0:
+            pygame.draw.rect(dis, "white", [snake[index][0], snake[index][1], snake_size, snake_size])
 
     pygame.display.update()
 
