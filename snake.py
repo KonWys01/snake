@@ -145,7 +145,7 @@ while not game_over:
     clock.tick(10)
 
 
-message("You lost", "red")
+message("You lost!", "red")
 pygame.display.update()
 time.sleep(2)
 
