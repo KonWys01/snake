@@ -1,66 +1,59 @@
 # page - https://www.edureka.co/blog/snake-game-with-pygame/
 import pygame
 import random
-import sys
+import time
 pygame.init()  # dostep do wszystkich metod z pygame
-width = 240
-height = 60
+
+width = 900
+height = 600
+
 dis = pygame.display.set_mode((width, height))  # rozmiar okna
 pygame.display.update()  # aktualizuje ekran
 pygame.display.set_caption('snake zrobiony ze strony, pewnie dziala cool')  # daje tytul na samej gorze
 
-"""starting_x = width / 2
-starting_y = height / 2"""
 starting_x = 0
 starting_y = 0
 x_delta = 0
 y_delta = 0
 
 snake_size = 30
-
+number_of_elements = width/snake_size * height/snake_size
 clock = pygame.time.Clock()
 
-# Food
-"""class Food2:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
 
-    @staticmethod
-    def re_generate_food():
-        Food.x = random.randrange(0, width - snake_size, snake_size)
-        Food.y = random.randrange(0, height - snake_size, snake_size)
+font_style = pygame.font.SysFont(None, 50)
 
 
-apple = Food2(random.randrange(0, width - snake_size, snake_size), random.randrange(0, height - snake_size, snake_size))
-print(apple.x, apple.y)"""
+def message(msg, color):
+    message_to_show = font_style.render(msg, True, color)
+    dis.blit(message_to_show, [width / 2, height / 2])
+
+
+score_font = pygame.font.SysFont("comicsansms", 35)
+
+
+def your_score(score):
+    value = score_font.render("Your Score: " + str(score), True, "yellow")
+    dis.blit(value, [0, 0])
 
 
 class Food:
-    # x = random.randrange(0, width - snake_size, snake_size)
-    # y = random.randrange(0, height - snake_size, snake_size)
     x = random.randrange(0, width, snake_size)
-
     y = random.randrange(0, height, snake_size)
 
     @staticmethod
     def re_generate_food():
         Food.x = random.randrange(0, width, snake_size)
         Food.y = random.randrange(0, height, snake_size)
-        # Food.x = random.randrange(0, width - snake_size, snake_size)
-        # Food.y = random.randrange(0, height - snake_size, snake_size)
+
 
 # first round in the game
 previous = pygame.K_RIGHT  # previous to zmienna przetrzymujaca poprzednio wcisniety klawisz
 first_round_in_game = True  # first iteration of loop game_over
 
-# making whole snake
+# making first snake
 snake = list()
 snake.append([starting_x, starting_y])
-print(snake)
-
-# Food not in whole snake
-
 
 
 # snake eats itself - program should stop
@@ -96,36 +89,30 @@ while not game_over:
     starting_x += x_delta
     starting_y += y_delta
     dis.fill("black")
-    # Draw Food outside of snake
-    #while Food.x == starting_x and Food.y == starting_y:
+    # Generate Food outside of head
     while snake[0][0] == Food.x and snake[0][1] == Food.y:
         Food.re_generate_food()
         first_round_in_game = False
         if not first_round_in_game:
-            print("jedzonko")
+            # print("jedzonko")
             snake.append([starting_x - x_delta, starting_y - y_delta])
             break
-    # first_round_in_game = False
+    first_round_in_game = False
 
-    # Food.re_generate_food()
+    # All food has been eaten
+    if number_of_elements == len(snake):
+        print("BRAWO WYGRALES GIERKE")
+        time.sleep(2)
+        game_over = True
+
+    # Generate Food outside of all snake
     while [Food.x, Food.y] in snake:
         Food.re_generate_food()
-        print("infinite loop", snake, [Food.x, Food.y])
-
-    """if len(snake) == 2:
-        print(snake, "game_over")
-        game_over = True
-        break"""
-
-
-
-
-                
 
     pygame.draw.rect(dis, "red", [Food.x, Food.y, snake_size, snake_size])
 
     # Make all elements of snake move
-    for index in range(len(snake)-1, -1, -1):
+    for index in range(len(snake) - 1, -1, -1):
         if index == 0:
             snake[index][0] += x_delta
             snake[index][1] += y_delta
@@ -133,28 +120,34 @@ while not game_over:
             snake[index][0] = snake[index - 1][0]
             snake[index][1] = snake[index - 1][1]
 
-    # test if every element is corrent
-    # print(snake)
     # Collision of snake with itself
-    if snake_eat_itself(snake):  # jest jakis bug, ale nie mam pojecia jaki i jak go naprawic
+    if snake_eat_itself(snake):
         game_over = True
 
-    # Draw snake
+    # Draw whole snake
     for element in snake:
         pygame.draw.rect(dis, "blue", [element[0], element[1], snake_size, snake_size])  # rysujemy niebieski prostokat w miejscu 200x150 o wymiarach 10x10
 
     pygame.draw.rect(dis, "blue", [starting_x, starting_y, snake_size, snake_size])
 
+    # Draw head of the snake
     for index in range(0, len(snake), 1):
         if index == 0:
             pygame.draw.rect(dis, "white", [snake[index][0], snake[index][1], snake_size, snake_size])
+            break
 
+    # Displaying your score
+    your_score(len(snake) - 1)
     pygame.display.update()
 
     if starting_x < 0 or starting_x > width - snake_size or starting_y < 0 or starting_y > height - snake_size:  # wychodzenie poza krawedzie rysunku
         game_over = True
+    clock.tick(10)
 
-    clock.tick(2)
+
+message("You lost", "red")
+pygame.display.update()
+time.sleep(2)
 
 pygame.quit()  # wylacza wszyskie podmoduły pygame
 quit()
