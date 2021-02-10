@@ -2,25 +2,15 @@
 import pygame
 import random
 import time
-pygame.init()  # dostep do wszystkich metod z pygame
+pygame.init()  # all pygame functions
 
 width = 900
 height = 600
 snake_size = 30
 
 dis = pygame.display.set_mode((width, height))  # rozmiar okna
-pygame.display.update()  # aktualizuje ekran
-pygame.display.set_caption('snake zrobiony ze strony, pewnie dziala cool')  # daje tytul na samej gorze
-
-"""starting_x = 0
-starting_y = 0
-x_delta = 0
-y_delta = 0
-
-snake_size = 30
-number_of_elements = width/snake_size * height/snake_size
-clock = pygame.time.Clock()"""
-
+pygame.display.update()
+pygame.display.set_caption('snake')  # title at the top left corner
 
 font_style = pygame.font.SysFont(None, 30)
 
@@ -28,7 +18,6 @@ font_style = pygame.font.SysFont(None, 30)
 def message(msg, color):
     message_to_show = font_style.render(msg, True, color)
     dis.blit(message_to_show, [width / 6, height / 2])
-
 
 
 score_font = pygame.font.SysFont("comicsansms", 35)
@@ -49,7 +38,7 @@ class Food:
         Food.y = random.randrange(0, height, snake_size)
 
 
-# snake eats itself - program should stop
+# snake eats itself - program stops
 def snake_eat_itself(snake_list):
     for coordinate in snake_list:
         if snake_list.count(coordinate) > 1:
@@ -57,14 +46,11 @@ def snake_eat_itself(snake_list):
 
 
 def game_loop():
-
-    # test whether loop works
-    print("game loop")
     # make whole loop work
     game_over = False
 
     # first round in the game
-    previous = pygame.K_RIGHT  # previous to zmienna przetrzymujaca poprzednio wcisniety klawisz
+    previous = pygame.K_RIGHT
     first_round_in_game = True  # first iteration of loop game_over
 
     # first positions
@@ -77,26 +63,13 @@ def game_loop():
     snake = list()
     snake.append([starting_x, starting_y])
 
-
-
-    snake_size = 30
     number_of_elements = width / snake_size * height / snake_size
     clock = pygame.time.Clock()
-    """game_over = False"""
+
     game_restart = True
     while not game_over:
-        """while game_close:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    game_over = True
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_y:
-                        game_close = False
-                        game_over = True
-                    if event.key == pygame.K_RIGHT and previous != pygame.K_LEFT:"""
-
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:  # event ktory po nacisnieciu przycisku wylaczania zamienia game_over na True
+            if event.type == pygame.QUIT:
                 game_over = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and previous != pygame.K_RIGHT:
@@ -119,23 +92,23 @@ def game_loop():
         starting_x += x_delta
         starting_y += y_delta
         dis.fill("black")
+
         # Generate Food outside of head
         while snake[0][0] == Food.x and snake[0][1] == Food.y:
             Food.re_generate_food()
             first_round_in_game = False
             if not first_round_in_game:
-                # print("jedzonko")
                 snake.append([starting_x - x_delta, starting_y - y_delta])
                 break
         first_round_in_game = False
 
         # All food has been eaten
         if number_of_elements == len(snake):
-            print("BRAWO WYGRALES GIERKE")
+            print("Good Job, you have won!")
             time.sleep(2)
             game_over = True
 
-        # Generate Food outside of all snake
+        # Generate Food outside of whole snake
         while [Food.x, Food.y] in snake:
             Food.re_generate_food()
 
@@ -156,7 +129,7 @@ def game_loop():
 
         # Draw whole snake
         for element in snake:
-            pygame.draw.rect(dis, "blue", [element[0], element[1], snake_size, snake_size])  # rysujemy niebieski prostokat w miejscu 200x150 o wymiarach 10x10
+            pygame.draw.rect(dis, "blue", [element[0], element[1], snake_size, snake_size])  # draw all blue cubes
 
         pygame.draw.rect(dis, "blue", [starting_x, starting_y, snake_size, snake_size])
 
@@ -170,16 +143,16 @@ def game_loop():
         your_score(len(snake) - 1)
         pygame.display.update()
 
-        if starting_x < 0 or starting_x > width - snake_size or starting_y < 0 or starting_y > height - snake_size:  # wychodzenie poza krawedzie rysunku
+        # snake is off the edge
+        if starting_x < 0 or starting_x > width - snake_size or starting_y < 0 or starting_y > height - snake_size:
             game_over = True
         clock.tick(10)
 
     message("You lost this round, wanna start again type Y, wanna end type N", "red")
     pygame.display.update()
-    #time.sleep(2)
     while game_restart:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:  # event ktory po nacisnieciu przycisku wylaczania zamienia game_over na True
+            if event.type == pygame.QUIT:  # ends whole game
                 game_restart = False
                 break
             if event.type == pygame.KEYDOWN:
@@ -192,5 +165,5 @@ def game_loop():
 
 
 game_loop()
-pygame.quit()  # wylacza wszyskie podmoduły pygame
+pygame.quit()  # turns off all pygame modules
 quit()
